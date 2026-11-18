@@ -1,22 +1,27 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <title>CampusConnect {% block title %}{% endblock %}</title>
-    </head>
-    <body>
-        <nav>
-            {% if user.is_authenticated %}
-                Hi, {{ user.username }} !
-                <form method="post" action="{% url 'logout' %}">
-                    {% csrf_token %}
-                    <button type ="submit">Log out</button>
-                </form>
-            {% else %}
-                <a href="{% url 'login' %}">Log in</a>
-                <a href="{% url 'signup' %}">Sign up</a>
-            {% endif %}
-        </nav>
-        <main>{% block content %}{% endblock %}</main>
-        <footer>{% block footer %}{% endblock %}</footer>
-    </body>
+<head><title>Hulam{% block title %}{% endblock %}</title></head>
+<body>
+<nav>
+    {% if user.is_authenticated %}
+        {% if user.role == "ADMIN" %}
+            <a href="{% url 'admin_dashboard' %}">Admin Dashboard</a>
+        {% else %}
+            <a href="{% url 'student_dashboard' %}">My Dashboard</a>
+        {% endif %}
+        <a href="{% url 'profile' %}">Profile</a>
+        Hi, {{ user.username }}!
+        <form method="post" action="{% url 'logout' %}" style="display:inline">
+            {% csrf_token %}<button type="submit">Log out</button>
+        </form>
+    {% else %}
+        <a href="{% url 'login' %}">Log in</a>
+        <a href="{% url 'signup' %}">Sign up</a>
+    {% endif %}
+</nav>
+{% for message in messages %}
+    <p style="color:{% if message.tags == 'error' %}red{% else %}green{% endif %}">{{ message }}</p>
+{% endfor %}
+<main>{% block content %}{% endblock %}</main>
+</body>
 </html>
